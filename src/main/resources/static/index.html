@@ -1,0 +1,39 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat</title>
+</head>
+<body>
+    <h1>Chat Room</h1>
+    <form id="chatForm">
+        <input type="text" id="name" placeholder="Enter your name">
+        <input type="text" id="message" placeholder="Enter your message">
+        <button type="submit">Send</button>
+    </form>
+    <div id="chat"></div>
+
+    <script>
+        const chatForm = document.getElementById('chatForm');
+        const nameInput = document.getElementById('name');
+        const messageInput = document.getElementById('message');
+        const chatDiv = document.getElementById('chat');
+
+        const socket = new WebSocket('ws://localhost:8080/chat');
+
+        socket.onmessage = function(event) {
+            const message = document.createElement('div');
+            message.textContent = event.data;
+            chatDiv.appendChild(message);
+        };
+
+        chatForm.onsubmit = function(event) {
+            event.preventDefault();
+            const name = nameInput.value;
+            const message = messageInput.value;
+            const data = JSON.stringify({ name: name, message: message });
+            socket.send(data);
+            messageInput.value = '';
+        };
+    </script>
+</body>
+</html>
